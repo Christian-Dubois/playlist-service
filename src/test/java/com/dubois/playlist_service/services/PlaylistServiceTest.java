@@ -2,6 +2,7 @@ package com.dubois.playlist_service.services;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.Assertions;
@@ -151,7 +152,14 @@ class PlaylistServiceTest {
 
         // then:
         PlaylistDTOWrapper playlistsPersisted = service.findAll();
-        assertEquals(2, playlistsPersisted.playlists().size(), "A quantidade de playlists no banco não é a esperada.");
+        assertEquals(2, playlistsPersisted.playlists().size(),
+                "A quantidade de playlists no banco não é a esperada.");
+        // and:
+        assertTrue(playlistsPersisted.playlists().contains(playlist1),
+                "Playlist1 não encontrada após exclusão.");
+        // and:
+        assertTrue(playlistsPersisted.playlists().contains(playlist3),
+                "Playlist3 não encontrada após exclusão.");
     }
 
     @Test

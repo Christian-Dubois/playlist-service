@@ -27,6 +27,4 @@ public class Music {
     private String album;
     private String ano;
     private String genero;
-    @ManyToMany
-    private List<Playlist> playlists;
 }

@@ -28,7 +28,7 @@ public class PlaylistConverter {
         }
 
         List<Music> musicas = new ArrayList<>();
-        if (dto.musicas() != null) {
+        if (dto.musicas() != null && !dto.musicas().isEmpty()) {
             musicas = dto.musicas().stream() //
                     .map(this.musicConverter::toEntity) //
                     .collect(Collectors.toList());
@@ -47,8 +47,8 @@ public class PlaylistConverter {
             return null;
         }
 
-        List<MusicDTO> musicas = new ArrayList<>();
-        if (entity.getMusicas() != null) {
+        List<MusicDTO> musicas = null;
+        if (entity.getMusicas() != null && !entity.getMusicas().isEmpty()) {
             musicas = entity.getMusicas().stream() //
                     .map(this.musicConverter::toDTO) //
                     .collect(Collectors.toList());
