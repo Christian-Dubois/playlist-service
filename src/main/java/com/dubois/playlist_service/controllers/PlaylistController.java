@@ -5,6 +5,7 @@ import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -56,6 +57,24 @@ public class PlaylistController {
             throw new EntityNotFoundException("Playlist not found");
         }
         return playlistDTO;
+    }
+
+    @DeleteMapping("/lists/{listName}")
+    public ResponseEntity<String> deletePlaylist(@RequestParam("listName") String listName) {
+        try {
+            this.playlistService.delete(listName);
+            return ResponseEntity //
+                    .status(HttpStatus.NO_CONTENT) //
+                    .body("Playlist deleted successfully");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity //
+                    .status(HttpStatus.NOT_FOUND) //
+                    .body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity //
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR) //
+                    .body(e.getMessage());
+        }
     }
 
 }

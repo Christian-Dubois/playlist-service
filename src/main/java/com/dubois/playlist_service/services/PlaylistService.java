@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,8 @@ import com.dubois.playlist_service.dtos.PlaylistDTO;
 import com.dubois.playlist_service.dtos.PlaylistDTOWrapper;
 import com.dubois.playlist_service.models.Playlist;
 import com.dubois.playlist_service.repositories.PlaylistRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 
 @Transactional
@@ -43,6 +46,13 @@ public class PlaylistService {
     public PlaylistDTO findByNome(String nome) {
         Playlist playlist =  this.playlistRepository.findByNome(nome).orElse(null);
         return this.playlistConverter.toDTO(playlist);
+    }
+
+    public void delete(String nome) {
+        Playlist playlist = this.playlistRepository.findByNome(nome).orElseThrow(
+                () -> new EntityNotFoundException("Playlist not found"));
+
+        this.playlistRepository.delete(playlist);
     }
 
     private void validatePlaylist(PlaylistDTO playlistDTO) throws BadRequestException {

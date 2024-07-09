@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.dubois.playlist_service.dtos.PlaylistDTO;
 import com.dubois.playlist_service.dtos.PlaylistDTOWrapper;
 
+import jakarta.persistence.EntityNotFoundException;
+
 
 @SpringBootTest
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -55,7 +57,7 @@ class PlaylistServiceTest {
         } catch (BadRequestException e) {
             message = e.getMessage();
         } catch (Exception e) {
-            Assertions.fail("Falha ao criar playlist: " + e.getMessage());
+            Assertions.fail("Unexpected Exception: " + e.getMessage());
         }
 
         // then:
@@ -74,7 +76,7 @@ class PlaylistServiceTest {
         } catch (BadRequestException e) {
             message = e.getMessage();
         } catch (Exception e) {
-            Assertions.fail("Falha ao criar playlist: " + e.getMessage());
+            Assertions.fail("Unexpected Exception: " + e.getMessage());
         }
 
         // then:
@@ -96,7 +98,7 @@ class PlaylistServiceTest {
         } catch (BadRequestException e) {
             message = e.getMessage();
         } catch (Exception e) {
-            Assertions.fail("Falha ao criar playlist: " + e.getMessage());
+            Assertions.fail("Unexpected Exception: " + e.getMessage());
         }
 
         // then:
@@ -125,6 +127,50 @@ class PlaylistServiceTest {
 
         // then:
         assertEquals(3, playlistsPersisted.playlists().size(), "A quantidade de playlists no banco não é a esperada.");
+    }
+
+    @Test
+    void delete() {
+        // given:
+        PlaylistDTO playlist1 = new PlaylistDTO("teste", null, null);
+        // and:
+        PlaylistDTO playlist2 = new PlaylistDTO("teste2", null, null);
+        // and:
+        PlaylistDTO playlist3 = new PlaylistDTO("teste3", null, null);
+        // and:
+        try {
+            service.createPlaylist(playlist1);
+            service.createPlaylist(playlist2);
+            service.createPlaylist(playlist3);
+        } catch (Exception e) {
+            Assertions.fail("Falha ao criar playlist: " + e.getMessage());
+        }
+
+        // when:
+        service.delete(playlist2.nome());
+
+        // then:
+        PlaylistDTOWrapper playlistsPersisted = service.findAll();
+        assertEquals(2, playlistsPersisted.playlists().size(), "A quantidade de playlists no banco não é a esperada.");
+    }
+
+    @Test
+    void delete$ExceptionWhenPlaylistDoesNotExist() {
+        // given:
+        String NonExistingPlaylistName = "teste";
+        String message = null;
+
+        // when:
+        try {
+            service.delete(NonExistingPlaylistName);
+        } catch (EntityNotFoundException e) {
+            message = e.getMessage();
+        } catch (Exception e) {
+            Assertions.fail("Unexpected Exception: " + e.getMessage());
+        }
+
+        // then:
+        assertEquals("Playlist not found", message);
     }
 
 }
