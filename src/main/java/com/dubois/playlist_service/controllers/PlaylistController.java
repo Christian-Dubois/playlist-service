@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,22 +51,22 @@ public class PlaylistController {
         return this.playlistService.findAll();
     }
 
-    @GetMapping("/lists/{listName}")
-    public PlaylistDTO findPlaylistByName(@RequestParam("listName") String listName) {
+    @GetMapping("/lists/")
+    public ResponseEntity<?> findPlaylistByName(@RequestParam("listName") String listName) {
         PlaylistDTO playlistDTO = this.playlistService.findByNome(listName);
         if (playlistDTO == null) {
-            throw new EntityNotFoundException("Playlist not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Playlist not found");
         }
-        return playlistDTO;
+        return ResponseEntity.ok(playlistDTO);
     }
 
-    @DeleteMapping("/lists/{listName}")
-    public ResponseEntity<String> deletePlaylist(@RequestParam("listName") String listName) {
+    @DeleteMapping("/lists/")
+    public ResponseEntity<String> deletePlaylistByName(@RequestParam("listName") String listName) {
         try {
-            this.playlistService.delete(listName);
+            this.playlistService.deleteByNome(listName);
             return ResponseEntity //
                     .status(HttpStatus.NO_CONTENT) //
-                    .body("Playlist deleted successfully");
+                    .body(null);
         } catch (EntityNotFoundException e) {
             return ResponseEntity //
                     .status(HttpStatus.NOT_FOUND) //

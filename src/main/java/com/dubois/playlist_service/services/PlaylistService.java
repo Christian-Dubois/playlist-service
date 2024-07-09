@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +35,10 @@ public class PlaylistService {
     @Transactional(readOnly = true)
     public PlaylistDTOWrapper findAll() {
         List<Playlist> playlists = this.playlistRepository.findAll();
+        if (playlists.isEmpty()) {
+            return null;
+        }
+
         List<PlaylistDTO> dtos = playlists.stream() //
                 .map(this.playlistConverter::toDTO) //
                 .collect(Collectors.toList());
@@ -48,7 +51,7 @@ public class PlaylistService {
         return this.playlistConverter.toDTO(playlist);
     }
 
-    public void delete(String nome) {
+    public void deleteByNome(String nome) {
         Playlist playlist = this.playlistRepository.findByNome(nome).orElseThrow(
                 () -> new EntityNotFoundException("Playlist not found"));
 

@@ -148,7 +148,7 @@ class PlaylistServiceTest {
         }
 
         // when:
-        service.delete(playlist2.nome());
+        service.deleteByNome(playlist2.nome());
 
         // then:
         PlaylistDTOWrapper playlistsPersisted = service.findAll();
@@ -170,7 +170,7 @@ class PlaylistServiceTest {
 
         // when:
         try {
-            service.delete(NonExistingPlaylistName);
+            service.deleteByNome(NonExistingPlaylistName);
         } catch (EntityNotFoundException e) {
             message = e.getMessage();
         } catch (Exception e) {
